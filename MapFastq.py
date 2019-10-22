@@ -127,10 +127,6 @@ class MapFastq(object):
         for read in pysamSamFile.fetch():
              pysamBamFile.write(read)'''
 
-        # convert file
-        cmd = [self.rnaEdit.params.sourceDir + "samtools", "view", "-bS", "-o", bamFile, samFile]
-        Helper.proceedCommand("Convert SAM to BAM", cmd, samFile, bamFile, self.rnaEdit)
-
         #pysam.sort(samFile,"-o", bamFile)
         cmd = [self.rnaEdit.params.sourceDir + "samtools", "sort", samFile,"-o", bamFile]
         Helper.proceedCommand("Sort Bam File", cmd, samFile, bamFile, self.rnaEdit)
