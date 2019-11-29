@@ -340,10 +340,15 @@ class CallEditingSites(object):
     
                 
         vcfFile=self.rnaEdit.params.output+".vcf"
+        # cmd = ["java","-Xmx12G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar",
+        #        "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.bamFile,
+        #        "-D", self.rnaEdit.params.dbsnp, "-o", vcfFile, "-metrics", self.rnaEdit.params.output+".snp.metrics", "-nt", self.rnaEdit.params.threads, "-l","ERROR",
+        #        "-stand_call_conf", self.rnaEdit.params.standCall, "-stand_emit_conf", self.rnaEdit.params.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
+
         cmd = ["java","-Xmx12G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar",
-               "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.bamFile, 
+               "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.bamFile,
                "-D", self.rnaEdit.params.dbsnp, "-o", vcfFile, "-metrics", self.rnaEdit.params.output+".snp.metrics", "-nt", self.rnaEdit.params.threads, "-l","ERROR",
-               "-stand_call_conf", self.rnaEdit.params.standCall, "-stand_emit_conf", self.rnaEdit.params.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
+               "-stand_call_conf", self.rnaEdit.params.standCall,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
         #print cmd
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.rnaEdit)
         
