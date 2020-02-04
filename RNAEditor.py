@@ -73,7 +73,7 @@ class RnaEdit:
         
         """ At this point the RnaEditor has succesfully finished """
         fileDir = os.path.dirname(os.path.realpath(__file__))
-        cmd=["python",fileDir+"/createDiagrams.py","-o", self.params.output]
+        cmd=["python", fileDir+"/createDiagrams.py", "-o", self.params.output]
         a=subprocess.call(cmd)
         
     def startAnalysis(self):
@@ -94,7 +94,7 @@ class RnaEdit:
         """
         START CALLING EDITING SITES
         """
-        self.callEditSites=CallEditingSites(mapResultFile,self)
+        self.callEditSites=CallEditingSites(mapResultFile, self)
         result = self.callEditSites.startAnalysis()
         
         
@@ -136,13 +136,13 @@ class RnaEdit:
         """checks if all files are there
         if all programs are installed properly and if the output directory is writable"""
         try:
-            self.logFile=open(self.params.output + ".log","w+")
+            self.logFile=open(self.params.output + ".log", "w+")
         except IOError:
             Helper.error("Cannot open Log File")
 
-        if type(self.fastqFiles) == list:
+        if isinstance(self.fastqFiles, list):
             self.fastqFiles=self.fastqFiles
-        elif type(self.fastqFiles) == str:
+        elif isinstance(self.fastqFiles, str):
             self.fastqFiles=[self.fastqFiles]
         else:
             Helper.error("FastQ File has wrong variable type", self.logFile)
@@ -202,13 +202,13 @@ class RnaEdit:
         
         
         if self.params.refGenome.endswith("fasta"):
-            if not os.path.isfile(self.params.refGenome.replace(".fasta",".dict")):
-                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fasta",".dict"), self.logFile)
-                Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir,self.params.refGenome,self.params.refGenome.replace(".fastq",".dict")),self.logFile,self.textField)
+            if not os.path.isfile(self.params.refGenome.replace(".fasta", ".dict")):
+                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fasta", ".dict"), self.logFile)
+                Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir, self.params.refGenome, self.params.refGenome.replace(".fastq", ".dict")), self.logFile, self.textField)
         elif self.params.refGenome.endswith("fa"):
-            if not os.path.isfile(self.params.refGenome.replace(".fa",".dict")):
-                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fa",".dict"), self.logFile)
-                Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir,self.params.refGenome,self.params.refGenome.replace(".fa",".dict")),self.logFile,self.textField)
+            if not os.path.isfile(self.params.refGenome.replace(".fa", ".dict")):
+                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fa", ".dict"), self.logFile)
+                Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir, self.params.refGenome, self.params.refGenome.replace(".fa", ".dict")), self.logFile, self.textField)
         else:
             Helper.error("RefGenome has wrong suffix. Either '.fa' or '.fasta'")
         if not os.path.isfile(self.params.refGenome+".fai"):
@@ -271,13 +271,13 @@ if __name__ == '__main__':
             ----------------------------------------------------------------
                 run without arguments to start the user interface.
             '''))
-        parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paired-end sequencing)', required=True)
+        parser.add_argument('-i', '--input', metavar='Fastq-Files', nargs='+', type=str, help='Input fastq files (maximum two for paired-end sequencing)', required=True)
         parser.add_argument('-c', '--conf', metavar='Configuration File', type=str, help='Configuration File used to read Parameters for RnaEditor', required=True, default='configuration.txt')
         
         args = parser.parse_args()
         
         parameters = Parameters(args.conf) 
-        edit=RnaEdit(args.input,parameters,0)
+        edit=RnaEdit(args.input, parameters, 0)
         
         edit.start()
         edit.wait()

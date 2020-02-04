@@ -31,7 +31,7 @@ class Genome(object):
         self.textField =textField
         
         startTime = Helper.getTime()
-        Helper.info(" [%s] Assembling Genome from %s" % (startTime.strftime("%c"),gtfFile),self.logFile,self.textField)
+        Helper.info(" [%s] Assembling Genome from %s" % (startTime.strftime("%c"), gtfFile), self.logFile, self.textField)
         
         
         #Dict / List for all Genes
@@ -64,9 +64,9 @@ class Genome(object):
         self.createTranscriptomeFromFile(gtfFile)
         self.genesByChromosome = self.getGenesByChromosome()
         
-        Helper.printTimeDiff(startTime,self.logFile,self.textField)
+        Helper.printTimeDiff(startTime, self.logFile, self.textField)
         
-    def parseGtf(self,gtfFile):
+    def parseGtf(self, gtfFile):
         """
             fill the dictionarys with the correspending attributes
         """
@@ -105,7 +105,7 @@ class Genome(object):
                     self.transcriptId_to_stopCodons[f.transcriptId] += (exonNumber, interval),
                     
         except:
-            raise SyntaxError("In line %s with Gene %s! Check your gtf file" % lineNumber,f.geneId)
+            raise SyntaxError("In line %s with Gene %s! Check your gtf file" % lineNumber, f.geneId)
         
     def assembleTranscriptome(self):
         '''
@@ -135,8 +135,8 @@ class Genome(object):
             
             gene = Gene(geneId, chromosome, strand, geneType, geneNames, geneExons, geneCds)
             
-            geneExons = dict(zip(geneExons,xrange(1000000)))
-            geneCds = dict(zip(geneCds,xrange(1000000))) 
+            geneExons = dict(list(zip(geneExons, list(range(1000000)))))
+            geneCds = dict(list(zip(geneCds, list(range(1000000))))) 
             
             
             self.geneList.append(gene)
@@ -159,11 +159,11 @@ class Genome(object):
                     raise Exception("Number of coding Exons and Frames differ for %s %s" % geneId, transcriptId)
                 
                 
-                transcript = Transcript(gene, transcriptId,list(transcriptNames), protId, exonIndices, codingExonIndices, codingFrames, startCodon, stopCodon)
+                transcript = Transcript(gene, transcriptId, list(transcriptNames), protId, exonIndices, codingExonIndices, codingFrames, startCodon, stopCodon)
                 
                 gene.addTranscript(transcript)
             
-    def createTranscriptomeFromFile(self,gtfFilePath):
+    def createTranscriptomeFromFile(self, gtfFilePath):
         """
         Construct Genome from GTF File
         Saves all the information in dictionarys
@@ -227,8 +227,8 @@ class Genome(object):
                 genesByChr[gene.chromosome].append(gene)
             
             #sort genes by by start and end
-            for key in genesByChr.keys():
-                genesByChr[key] = sorted(genesByChr[key], key=attrgetter('start','end'))
+            for key in list(genesByChr.keys()):
+                genesByChr[key] = sorted(genesByChr[key], key=attrgetter('start', 'end'))
         
         return genesByChr    
         
@@ -242,7 +242,7 @@ class Genome(object):
             genesByGeneID[gene.geneId]=gene
         return genesByGeneID
     
-    def annotateRegion(self,chromosome,start,stop):
+    def annotateRegion(self, chromosome, start, stop):
         """
             returns information for the given region like (3'UTR,Exon,Intron,5'UTR)
         
@@ -266,7 +266,7 @@ class Genome(object):
         
         #TODO: write this function like annotate position
         
-    def annotatePosition(self,chromosome, position):
+    def annotatePosition(self, chromosome, position):
         '''
         returns the gene and information for the given position like (3'UTR,Exon,Intron,5'UTR)
         :param chromosome: String
@@ -312,12 +312,12 @@ class Genome(object):
                 if len(segment)==0:
                     segment.add("intron")
                     
-                result.append((gene,tuple(segment)))
+                result.append((gene, tuple(segment)))
                 #if len(segment)>=2:
                 #   print(chromosome,gene.geneId,int(position),segment)
                     
         if result == []:
-            result.append(("-",tuple(["intergenic"]))) 
+            result.append(("-", tuple(["intergenic"]))) 
         #return geneName, segment    
         return result
         

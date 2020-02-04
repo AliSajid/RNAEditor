@@ -25,7 +25,7 @@ class Feature:
         self.attributes = {}
     
     
-    def readline(self,line):
+    def readline(self, line):
         '''
         process one line of the gtf file
         <seqname> <source> <feature> <start> <end> <score> <strand> <frame> [attributes] [comments]
@@ -41,7 +41,7 @@ class Feature:
             self.start = int(line[3])
             self.end = int(line[4])
             self.score = line[5]
-            self.strand = line[6] in ['1','+'] # 
+            self.strand = line[6] in ['1', '+'] # 
             self.frame = line[7]
         except ValueError:
             raise ValueError("Error in line '%s'" % " ".join(line))
@@ -53,11 +53,11 @@ class Feature:
         attributes = line[8]
         #trim comments
         attributes=attributes[:attributes.find("#")].rstrip()
-        values = map(lambda x: x.strip(), attributes.split(";")[:-1])
+        values = [x.strip() for x in attributes.split(";")[:-1]]
         
         for info in values:
-            info = map( lambda x: x.strip(), info.split(" "))
-            name, value=info[0], info[1].replace("\"","")
+            info = [x.strip() for x in info.split(" ")]
+            name, value=info[0], info[1].replace("\"", "")
 
             if name == "gene_id":
                 self.geneId = value
@@ -85,13 +85,13 @@ class Feature:
          
 def iterator(infile):
 
-    while 1:
+    while True:
         line = infile.readline()
         if not line: raise StopIteration
         if line.startswith("#"): continue #skip comments
         #added to handle GRCH38 which contains features for genes, transcripts and UTR's which have to be skipped
         #TODO: change this to handle UTR's more precisely
-        if line.split("\t")[2] not in ("CDS","exon","start_codon","stop_codon"): continue
+        if line.split("\t")[2] not in ("CDS", "exon", "start_codon", "stop_codon"): continue
         gtf = Feature()
         gtf.readline(line)
         yield gtf

@@ -14,9 +14,9 @@ from Genome import Genome
 
 
 parser = argparse.ArgumentParser(description='reanalyze editing islands.')
-parser.add_argument("-f", "--files", metavar="N",type=str, nargs="+", help="list of editing site files (vcf)", required=True)
-parser.add_argument("-g", "--genome", metavar="N",type=str, help="Genome file (GTF", required=True)
-parser.add_argument("-e", "--eps", metavar="N",type=int, help="epsilon parameter for DBSCAN", default=50)
+parser.add_argument("-f", "--files", metavar="N", type=str, nargs="+", help="list of editing site files (vcf)", required=True)
+parser.add_argument("-g", "--genome", metavar="N", type=str, help="Genome file (GTF", required=True)
+parser.add_argument("-e", "--eps", metavar="N", type=int, help="epsilon parameter for DBSCAN", default=50)
 parser.add_argument("-m", "--minpts", metavar="N", type=int, help="min number of points", default=3)
 parser.add_argument("-o", "--out", metavar = "N", type = str, help = "outputDir", default = "~/")
 

@@ -36,7 +36,7 @@ class Transcript(object):
     
     
        
-        __slots__ = ["gene","transcriptId","protId", "startAnalysis","stop","codingStart",
-             "codingStop","names","exonIndices","codingExonIndices",
-             "codingFrames","virtualExonIndices","virtualCodingExonIndices",
-             "startCodons","stopCodons"]
+        __slots__ = ["gene", "transcriptId", "protId", "startAnalysis", "stop", "codingStart",
+             "codingStop", "names", "exonIndices", "codingExonIndices",
+             "codingFrames", "virtualExonIndices", "virtualCodingExonIndices",
+             "startCodons", "stopCodons"]

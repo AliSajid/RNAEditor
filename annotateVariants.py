@@ -14,8 +14,8 @@ from Genome import Genome
 
 
 parser = argparse.ArgumentParser(description='reanalyze editing islands.')
-parser.add_argument("-f", "--files", metavar="N",type=str, nargs="+", help="list of variant files (vcf)", required=True)
-parser.add_argument("-g", "--genome", metavar="N",type=str, help="Genome file (GTF", required=True)
+parser.add_argument("-f", "--files", metavar="N", type=str, nargs="+", help="list of variant files (vcf)", required=True)
+parser.add_argument("-g", "--genome", metavar="N", type=str, help="Genome file (GTF", required=True)
 parser.add_argument("-o", "--out", metavar = "N", type = str, help = "outputDir", default = "./")
 
 args = parser.parse_args()

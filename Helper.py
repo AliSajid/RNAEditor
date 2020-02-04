@@ -27,12 +27,12 @@ class Parameters():
         creates an parameter object which contains all the parameters for RnaEditor
         :param source: either a QWidget or a textFile from where the parameters are read from
         '''
-        if type(source)==str:
+        if isinstance(source, str):
             self.readDefaultsFromFile(source)
         else:
             Helper.error("Parameter source has wrong Type [str or QWidget]")
 
-    def readDefaultsFromFile(self,file):
+    def readDefaultsFromFile(self, file):
         try:
             confFile = open(file)
         except IOError:
@@ -107,7 +107,7 @@ class Helper():
     
     prefix = "*** "
     praefix = " ***"
-    colors = ["red","green","blue","olive","grey"]
+    colors = ["red", "green", "blue", "olive", "grey"]
     #dummy element is added to the array to avoid 0/1 problem from the Tab array and these arrays
     #otherwise i had to add -1 every time i want to access the following arrays
     runningThreads=["dummy"]
@@ -148,21 +148,21 @@ class Helper():
     
     
     @staticmethod
-    def convertPhred64toPhred33(fastqFile,outFile,logFile,textField):
+    def convertPhred64toPhred33(fastqFile, outFile, logFile, textField):
         """
         converts the inputFile to phred33 Quality and writes it into the ourdir
         :rtype: String to converted FastQ file
         """
         startTime=Helper.getTime()
-        Helper.info("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *",logFile,textField)
+        Helper.info("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *", logFile, textField)
         
         
         if os.path.exists(outFile):
-            Helper.info("* * * [Skipping] Result File already exists * * *",logFile,textField)
+            Helper.info("* * * [Skipping] Result File already exists * * *", logFile, textField)
             return outFile
         
-        outFile = open(outFile,"w")
-        fastqFile=open(fastqFile,"r")
+        outFile = open(outFile, "w")
+        fastqFile=open(fastqFile, "r")
         
         lineNumber = 0 
         for line in fastqFile:
@@ -184,11 +184,11 @@ class Helper():
         return outFile.name
     
     @staticmethod
-    def isPhred33Encoding(inFastqFile,lines,logFile, runNumber):
+    def isPhred33Encoding(inFastqFile, lines, logFile, runNumber):
         """
         check in the first lines if the quality encoding is phred33
         """
-        fastqFile=open(inFastqFile,"r")
+        fastqFile=open(inFastqFile, "r")
         lineNumber=0
 
         lines=lines*4
@@ -201,15 +201,15 @@ class Helper():
                         fastqFile.close()
                         return False
                     if ord(char)>105:
-                        Helper.error("%s has no valid quality encoding. \n\t Please use a valid FastQ file??" % fastqFile.name,logFile, runNumber)
+                        Helper.error("%s has no valid quality encoding. \n\t Please use a valid FastQ file??" % fastqFile.name, logFile, runNumber)
             if lineNumber > lines:
                 fastqFile.close()
                 return True
             
-        Helper.error("%s has less than %i Sxequences. \n These are not enough reads for editing detection!!" % (fastqFile.name,lines),logFile, runNumber)
+        Helper.error("%s has less than %i Sxequences. \n These are not enough reads for editing detection!!" % (fastqFile.name, lines), logFile, runNumber)
     
     @staticmethod
-    def proceedCommand(description,cmd,infile,outfile,rnaEdit):
+    def proceedCommand(description, cmd, infile, outfile, rnaEdit):
         '''
         run a specific NGS-processing-step on the system
         '''
@@ -218,12 +218,12 @@ class Helper():
         overwrite=rnaEdit.params.overwrite
         
         startTime=Helper.getTime()
-        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",logFile,textField)
+        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *", logFile, textField)
         
         
         #check if infile exists
         if not os.path.isfile(infile):
-            Helper.error(infile + " does not exist, Error in previous Step",logFile,textField)
+            Helper.error(infile + " does not exist, Error in previous Step", logFile, textField)
             #Exception(infile + "does not exist, Error in previous Step")
             #exit(1)
         
@@ -233,7 +233,7 @@ class Helper():
             if outfile == "None":
                 resultFile=None
             else:
-                resultFile=open(outfile,"w+")
+                resultFile=open(outfile, "w+")
             try:    
                 
                 #print " ".join(cmd),resultFile,logFile
@@ -252,54 +252,54 @@ class Helper():
                 rnaEdit.runningCommand=False
                 if retcode != 0:
                     if retcode == -9:
-                        Helper.error(description+ " canceled by User!!!",logFile,textField)
+                        Helper.error(description+ " canceled by User!!!", logFile, textField)
                     else:
-                        Helper.error(description+ " failed!!!",logFile,textField)
+                        Helper.error(description+ " failed!!!", logFile, textField)
                     
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
             except OSError as o:
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
-                    Helper.error(cmd[0] + " Command not found on this system",logFile,textField)
+                    Helper.error(cmd[0] + " Command not found on this system", logFile, textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
                 else:
-                    Helper.error(cmd[0] + o.strerror,logFile,textField)
+                    Helper.error(cmd[0] + o.strerror, logFile, textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
             Helper.printTimeDiff(startTime, logFile, textField, "green")
         else:
-            Helper.info("\t [SKIP] File already exist",logFile,textField, "green") 
+            Helper.info("\t [SKIP] File already exist", logFile, textField, "green") 
 
     @staticmethod
-    def getPositionDictFromVcfFile(vcfFile,runNumber):
+    def getPositionDictFromVcfFile(vcfFile, runNumber):
         """
         return a dictionary whith chromosome as keys and a set of variants as values
         variantDict={chromosome:(variantPos1,variantPos2,....)}
         """
         variantFile=open(vcfFile)
         variantDict=defaultdict(set)
-        Helper.info("reading Variants from %s" % vcfFile,runNumber)
+        Helper.info("reading Variants from %s" % vcfFile, runNumber)
         for line in variantFile:
             #skip comments
             if line.startswith("#"): continue
             line=line.split("\t")
-            chromosome,position,ref,alt = line[0],line[1],line[3],line[4]
+            chromosome, position, ref, alt = line[0], line[1], line[3], line[4]
             variantDict[chromosome].add(position)
         return variantDict
     
     @staticmethod
-    def removeVariantsAFromVariantsB(variantsDictA,variantsDictB):        
-        if type(variantsDictA) is str:
+    def removeVariantsAFromVariantsB(variantsDictA, variantsDictB):        
+        if isinstance(variantsDictA, str):
             variantsDictA = Helper.returnVariantDictFromVcfFile(variantsDictA)
-        if type(variantsDictB) is str:
+        if isinstance(variantsDictB, str):
             variantsDictB = Helper.returnVariantDictFromVcfFile(variantsDictB)
             
         resultDict = defaultdict(set)
-        for variant in variantsDictB.iterkeys():
+        for variant in variantsDictB.keys():
             if variant not in variantsDictA[chr]:
                 resultDict[chr].append(variant)
         return resultDict
@@ -316,8 +316,8 @@ class Helper():
             #skip comments
             if line.startswith("#"): continue
             line=line.rstrip().split()
-            chromosome,position,ref, alt = line[0],line[1], line[3], line[4]
-            vcfDict[chromosome][position,ref,alt]=([line[2]]+line[5:])
+            chromosome, position, ref, alt = line[0], line[1], line[3], line[4]
+            vcfDict[chromosome][position, ref, alt]=([line[2]]+line[5:])
         return vcfDict
 
     @staticmethod
@@ -334,14 +334,14 @@ class Helper():
         :param file: 
         :param column: hold the data wich should be counted
         '''
-        if type(column)!=int:
+        if not isinstance(column, int):
             column=int(column)
-        if type(inFile) == str:
+        if isinstance(inFile, str):
             try:
                 inFile=open(inFile)
             except IOError:
-                Helper.warning("Could not open %s to write Variant" % file ,logFile,textField)
-        if type(inFile) != file:   
+                Helper.warning("Could not open %s to write Variant" % file, logFile, textField)
+        if not isinstance(inFile, file):   
             raise AttributeError("Invalid file type in 'countOccurrences' (need string or file, %s found)" % type(inFile))
         
         keySet=()
@@ -388,11 +388,11 @@ class Helper():
         ax.set_ylabel(yText)
         ax.set_xticks(ind+width)
         ax.set_xticklabels( barNamesTuple, rotation='vertical' )
-        ax.set_xlim(min(ind)-0.1,max(ind)+(width*len(valueMatrix))*1.1)
+        ax.set_xlim(min(ind)-0.1, max(ind)+(width*len(valueMatrix))*1.1)
         if yLim!=None:
-            ax.set_ylim(0,yLim)
+            ax.set_ylim(0, yLim)
         
-        color=['b','g','r','y']*len(valueMatrix)
+        color=['b', 'g', 'r', 'y']*len(valueMatrix)
         
         
         rects=()
@@ -400,10 +400,10 @@ class Helper():
         def autolabel(rects):# attach some text labels
             for rect in rects:
                 height = rect.get_height()
-                ax.text(rect.get_x()+rect.get_width()/2., height/2  , '%1.0f'%float(height), ha='center', va='bottom', fontsize=8, rotation='vertical', )
+                ax.text(rect.get_x()+rect.get_width()/2., height/2, '%1.0f'%float(height), ha='center', va='bottom', fontsize=8, rotation='vertical', )
         
         i=0
-        for values,c in zip(valueMatrix,color):
+        for values, c in zip(valueMatrix, color):
             rect=ax.bar((ind+width*i), values, width, color=c, )
             rects+=(rect,)
             
@@ -425,7 +425,7 @@ class Helper():
         
         #copy rnaEditor logo to htmlOutPrefix
         fileDir = os.path.dirname(os.path.realpath(__file__))
-        copyfile(fileDir + '/ui/icons/rnaEditor_512x512.png',stats.outdir+"html/rnaEditor_512x512.png")
+        copyfile(fileDir + '/ui/icons/rnaEditor_512x512.png', stats.outdir+"html/rnaEditor_512x512.png")
         
         outDict={"title":"Result Page for "+ stats.sampleName,
                  "sampleName":stats.sampleName,
@@ -452,7 +452,7 @@ class Helper():
               }
         
 
-        outfile=open(stats.output+".html","w+")
+        outfile=open(stats.output+".html", "w+")
         
         outfile.write("""<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN'
     'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
@@ -628,7 +628,7 @@ class Helper():
         array=[]
         summe=float(sum(list))
         for value in list:
-            array.append(round((float(value)/summe)*100.0,2))
+            array.append(round((float(value)/summe)*100.0, 2))
         #print array    
         return array   
 
@@ -638,14 +638,14 @@ class Helper():
         Count the number of base mismatches and return the Dictionary with the numbers
         :param vcf File:
         '''
-        if type(vcfFile) == str:
+        if isinstance(vcfFile, str):
             if os.path.getsize(vcfFile) == 0: #getsize raises OSError if file is not existing
                 raise IOError("%s File is empty" % vcfFile)
-            vcfFile = open(vcfFile,"r")
-        elif type(vcfFile) != file:
+            vcfFile = open(vcfFile, "r")
+        elif not isinstance(vcfFile, file):
             raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(vcfFile)) 
         
-        mmBaseCounts=OrderedDict([("A->C",0),("A->G",0),("A->T",0),("C->A",0),("C->G",0),("C->T",0),("G->A",0),("G->C",0),("G->T",0),("T->A",0),("T->C",0),("T->G",0)])
+        mmBaseCounts=OrderedDict([("A->C", 0), ("A->G", 0), ("A->T", 0), ("C->A", 0), ("C->G", 0), ("C->T", 0), ("G->A", 0), ("G->C", 0), ("G->T", 0), ("T->A", 0), ("T->C", 0), ("T->G", 0)])
         
         for line in vcfFile:
             if line.startswith('#'): continue
@@ -701,7 +701,7 @@ class Helper():
         if logFile!=None:
             logFile.write(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
             logFile.flush()
-        print(traceback.format_exc())
+        print((traceback.format_exc()))
         #sys.stderr.write("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
         raise Exception("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
     @staticmethod
