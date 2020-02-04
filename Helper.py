@@ -10,7 +10,7 @@ from collections import defaultdict, OrderedDict
 import traceback
 import ui
 from numpy import arange
-from PyQt4 import QtCore
+#from PyQt4 import QtCore
 #from matplotlib.backends import qt_compat
 #from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.pyplot import subplots_adjust, subplots
@@ -29,38 +29,9 @@ class Parameters():
         '''
         if type(source)==str:
             self.readDefaultsFromFile(source)
-        elif isinstance(source, ui.InputTab.InputTab):
-            self.getParametersFromInputTab(source)
         else:
             Helper.error("Parameter source has wrong Type [str or QWidget]")
-       
-    def getParametersFromInputTab(self,inputTab):
-        '''
-        get the Parameters and update the default Parameters from the Default class 
-        '''
-        self.refGenome = str(inputTab.refGenomeTextBox.text())
-        self.gtfFile = str(inputTab.gtfFileTextBox.text())
-        self.dbsnp = str(inputTab.dbsnpTextBox.text())
-        self.hapmap = str(inputTab.hapmapTextBox.text())
-        self.omni = str(inputTab.omniTextBox.text())
-        self.esp = str(inputTab.espTextBox.text())
-        self.aluRegions = str(inputTab.aluRegionsTextBox.text())
-        self.output = str(inputTab.outputTextBox.text())
-        self.sourceDir = str(inputTab.sourceDirTextBox.text())
-        
-        self.threads = str(inputTab.threadsSpinBox.value())
-        self.maxDiff = str(inputTab.maxDiffSpinBox.value())
-        self.seedDiff = str(inputTab.seedSpinBox.value())
-        self.standCall = str(inputTab.standCallSpinBox.value())
-        self.standEmit = str(inputTab.standEmitSpinBox.value())
-        self.edgeDistance = str(inputTab.edgeDistanceSpinBox.value())
-        self.intronDistance = str(inputTab.intronDistanceSpinBox.value())
-        self.minPts = str(inputTab.minPtsSpinBox.value())
-        self.eps = str(inputTab.epsSpinBox.value())
-        self.paired = inputTab.pairedCheckBox.isChecked()
-        self.overwrite = inputTab.overwriteCheckBox.isChecked()
-        self.keepTemp = inputTab.keepTempCheckBox.isChecked()
-                  
+
     def readDefaultsFromFile(self,file):
         try:
             confFile = open(file)
@@ -695,14 +666,8 @@ class Helper():
         return mmBaseCounts
         
     @staticmethod
-    def printTimeDiff(startTime,logFile=None,textField=0,color="green"):
+    def printTimeDiff(startTime,logFile=None):
         duration = Helper.getTime() - startTime
-        if textField!=0:
-            #currentAssay = Helper.runningAssays[textField] 
-            if color in Helper.colors:
-                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg("[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n"))
-            else:
-                textField.append(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         if logFile!=None:
             logFile.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         
@@ -720,31 +685,19 @@ class Helper():
             logFile.flush()
         sys.stderr.write("\n"*quantity)
     @staticmethod
-    def info (message,logFile=None,textField=0,color="olive"):
-        if textField!=0:
-            if color in Helper.colors:
-                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
-            else:
-                textField.append(Helper.prefix + "INFO:    "  + message + Helper.praefix)
+    def info (message,logFile=None):
         if logFile!=None:
             logFile.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
             logFile.flush()
         sys.stderr.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
     @staticmethod
-    def warning (message,logFile=None,textField=0):
-        if textField!=0:
-            textField.append("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
+    def warning (message,logFile=None):
         if logFile!=None:
             logFile.write(Helper.prefix + "WARNING:    "  + message + Helper.praefix + "\n")
             logFile.flush()
         sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
     @staticmethod
-    def error (message,logFile=None,textField=0,color="red"):
-        if textField!=0:
-            if color in Helper.colors:
-                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
-            else:
-                textField.append(Helper.prefix + "ERROR:    "  + message + Helper.praefix)
+    def error (message,logFile=None):
         if logFile!=None:
             logFile.write(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
             logFile.flush()
@@ -752,24 +705,13 @@ class Helper():
         #sys.stderr.write("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
         raise Exception("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
     @staticmethod
-    def debug (message,logFile=None,textField=0):
-        if textField!=0:
-            textField.append(Helper.prefix + "DEBUG:    "  + message + Helper.praefix)
+    def debug (message,logFile=None):
         if logFile!=None:
             logFile.write(Helper.prefix + "DEBUG:    "  + message + Helper.praefix + "\n")
             logFile.flush()
         sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")
     @staticmethod
-    def status(message,logFile=None,textField=0,color=None,bold=False):
-        if textField!=0:
-            #currentAssay = Helper.runningAssays[runNumber] 
-            if color in Helper.colors:
-                if bold==True:
-                    textField.append(QtCore.QString("<font color=\""+color+"\"><b>%1</b></font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
-                else:
-                    textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
-            else:
-                textField.append(Helper.prefix + "STATUS:    "  + message + Helper.praefix)
+    def status(message,logFile=None):
         if logFile!=None:
             logFile.write(Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
             logFile.flush()
